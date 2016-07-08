@@ -1,0 +1,28 @@
+version: '2'
+services:
+  cyanite:
+    build: .
+    ports:
+      - 8080:8080
+      - 2003:2003
+    depends_on:
+      - cassandra
+      - cassandra_schema
+    networks:
+      - cyanite 
+  cassandra:
+    image: cassandra:3.0
+    networks:
+      - cyanite
+  cassandra_schema:
+    image: cassandra:3.0
+    networks:
+      - cyanite
+    command: cqlsh cassandra -f /tmp/schema.cql
+    volumes: 
+      - ./schema.cql:/tmp/schema.cql
+    depends_on:
+      - cassandra
+networks:
+  cyanite:
+    driver: bridge

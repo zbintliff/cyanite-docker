@@ -1,0 +1,20 @@
+logging:
+  level: trace
+  console: true
+input:
+  - type: "carbon"
+    host: 0.0.0.0
+    port: 2003
+store:
+  cluster: "cassandra"
+index:
+  type: "cassandra"
+  cluster: "cassandra"
+  keyspace: "metric"
+api:
+  port: 8080
+  host: 0.0.0.0
+engine:
+  rules:
+    default:
+      - "10s:1h"
