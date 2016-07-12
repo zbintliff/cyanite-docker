@@ -70,7 +70,7 @@ api:
 input:
   - type: carbon
     port: 2003
-    hots: '0.0.0.0'
+    host: '0.0.0.0'
 ##
 ## Index
 ## =====
@@ -88,7 +88,9 @@ input:
 ## *keyspace*:
 ##   The keyspace to use.
 index:
-  type: agent
+  type: cassandra
+  cluster: cassandra   ### DNSname of cassandra container
+  keyspace: metric
 ##
 ## Drift
 ## =====
@@ -128,7 +130,7 @@ store:
 ## Specify where to log. Adheres to the configuration format
 ## defined at https://github.com/pyr/unilog
 logging:
-  level: info
+  level: trace
   console: true
   files:
     - '/var/log/cyanite/cyanite.log'
