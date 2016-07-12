@@ -1,20 +1,136 @@
-logging:
-  level: trace
-  console: true
-input:
-  - type: "carbon"
-    host: 0.0.0.0
-    port: 2003
-store:
-  cluster: "cassandra"
-index:
-  type: "cassandra"
-  cluster: "cassandra"
-  keyspace: "metric"
-api:
-  port: 8080
-  host: 0.0.0.0
+##
+## Cyanite configuration
+## =====================
+##
+## Cyanite's configuration is broken up in
+## different sections:
+##
+## - engine
+## - api
+## - input
+## - index
+## - store
+## - logging
+##
+## Most sections are optional but provide defaults
+## for a single host testing system
+##
+## Engine
+## ======
+##
+## The engine specifies the behavior of Cyanite's core
+## which accepts metrics from inputs, aggregates in-memory
+## and defers to an index and a store when a time-window
+## elapses
+##
+## The engine accepts the following options:
+##
+## *rules*:
+##   Rules specifies which resolutions to apply to an incoming metric.
+##   Rules consist of a pattern or the string "default" and an associated
+##   list of resolutions.
+##   Rules are evaluated in a first-match order. Resolutions are stored as a
+##   string of the form: <precision>:<period>, you may use unit specifiers
+##   for seconds, minutes, hours, days, weeks and months and years.
 engine:
   rules:
-    default:
-      - "10s:1h"
+    default: [ "5s:1h" ]
+##
+## API
+## ===
+##
+## The API specifies the behavior of the HTTP interface which is exposed.
+## The API accepts the following options:
+##
+## *host*:
+##    Address to listen on, defaults to 127.0.0.1
+## *port*:
+##    Port to bind to, defaults to 8080
+## *disabled:
+##    Disable HTTP service altogether, defaults to false.
+api:
+  port: 8080
+  host: '0.0.0.0'
+##
+## Input
+## ====
+##
+## Inputs are methods for Cyanite to ingest metrics. A Cyanite installation
+## may have several inputs running, and thus accepts a list of input
+## configurations.
+##
+## Each input configuration takes the following options:
+##
+## *type*:
+##   Type of input, for now only "carbon"
+## *host*:
+##   Address to bind to.
+## *port*:
+##   Port to bind to.
+input:
+  - type: carbon
+    port: 2003
+    hots: '0.0.0.0'
+##
+## Index
+## =====
+##
+## The index determines where metric names will be stored.
+## Two types of indices are available now: "agent" and
+## "cassandra". If no index section is present,
+## An in-memory (agent) index will be assumed.
+##
+## The agent index takes no options.
+## The cassandra index takes the following options:
+##
+## *cluster*:
+##   A string or list of strings to provide cluster contact points.
+## *keyspace*:
+##   The keyspace to use.
+index:
+  type: agent
+##
+## Drift
+## =====
+##
+## Detects the drift on the agent clock and ensures
+## that the snapshot epoch is calculated correctly
+## despite the time difference between the agent
+## and the calculating machine.
+##
+## Default implementation is `agent`.
+## If you trust your clocks and/or would like to
+## avoid drift handling on Cyanite side, you
+## can opt-out for `no-op` one.
+drift:
+  type: agent
+##
+## Store
+## =====
+##
+## The store is where metrics get persisted.
+## The only store available for now is the "cassandra"
+## one.
+##
+## The following options are accepted:
+##
+## *cluster*:
+##   A string or list of strings to provide cluster contact points.
+## *keyspace*:
+##   The keyspace to use.
+store:
+  cluster: 'cassandra'  ### Docker magic dns
+  keyspace: 'metric'
+##
+## Logging
+## =======
+##
+## Specify where to log. Adheres to the configuration format
+## defined at https://github.com/pyr/unilog
+logging:
+  level: info
+  console: true
+  files:
+    - '/var/log/cyanite/cyanite.log'
+  overrides:
+    io.cyanite: 'debug'
