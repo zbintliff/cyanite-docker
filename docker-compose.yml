@@ -50,7 +50,7 @@ services:
       - "GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL=http://localhost"
       - "GF_USERS_ALLOW_SIGN_UP=false"
       - "GF_SECURITY_LOGIN_REMEMBER_DAYS=1"
-    netowrks:
+    networks:
       - cyanite
     depends_on:
       - graphite-api
