@@ -29,31 +29,6 @@ services:
       - cyanite
     networks:
       - cyanite
-  graphite-api:
-    build: ./apps/graphite-api
-    depends_on:
-      - cyanite
-    networks:
-      - cyanite
-    ports:
-      - 8000:8000
-  grafana:
-    image: grafana/grafana
-    ports:
-      - 3000:3000
-    environment:
-      - "GF_LOG_MODE=console"
-      - "GF_AUTH_ANONYMOUS_ENABLED=true"
-      - "GF_AUTH_ANONYMOUS_ORG_ROLE=Editor"
-      - "GF_AUTH_BASIC_ENABLED=false"
-      - "GF_SNAPSHOTS_EXTERNAL_ENABLED=false"
-      - "GF_SNAPSHOTS_EXTERNAL_SNAPSHOT_URL=http://localhost"
-      - "GF_USERS_ALLOW_SIGN_UP=false"
-      - "GF_SECURITY_LOGIN_REMEMBER_DAYS=1"
-    networks:
-      - cyanite
-    depends_on:
-      - graphite-api
 networks:
   cyanite:
     driver: bridge
